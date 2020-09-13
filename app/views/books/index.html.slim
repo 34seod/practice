@@ -1,0 +1,32 @@
+h1 Books#index
+p Find me in app/views/books/index.html.slim
+
+table.table
+  thead
+    th
+      | ISBN코드
+    th
+      | 책제목
+    th
+      | 가격
+    th
+      | 출판사
+    th
+      | 출간일
+    th
+      | 다운로드
+  tbody
+    - @books.each do |book|
+      tr
+        td
+          = book.isbn
+        td
+          = book.title
+        td
+          = book.price
+        td
+          = book.publish
+        td
+          = book.published
+        td
+          = book.dl
