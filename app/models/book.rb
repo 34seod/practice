@@ -13,4 +13,5 @@
 #  updated_at :datetime         not null
 #
 class Book < ApplicationRecord
+  has_many :authors_books
 end
