@@ -6,7 +6,7 @@
 #  dm              :boolean
 #  email           :string
 #  password_digest :string
-#  reviews_count   :integer
+#  reviews_count   :integer          default(0)
 #  roles           :string
 #  username        :string
 #  created_at      :datetime         not null

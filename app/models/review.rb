@@ -4,7 +4,7 @@
 #
 #  id         :bigint           not null, primary key
 #  body       :text
-#  status     :integer
+#  status     :integer          default("draft"), not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  book_id    :bigint
@@ -23,4 +23,6 @@
 class Review < ApplicationRecord
   belongs_to :book
   belongs_to :user
+
+  enum status: { draft: 0, published: 1, deleted: 2 }
 end

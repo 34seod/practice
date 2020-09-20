@@ -45,6 +45,7 @@
 #       hello_show GET    /hello/show(.:format)            hello#show
 
 Rails.application.routes.draw do
+  resources :members
   resources :fan_comments
   resources :reviews
   resources :authors

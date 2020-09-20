@@ -1,4 +1,4 @@
-Review.seed(:id,
+Review.seed_once(:id,
   { id: 1, book_id: 1, user_id: 2, status: 0, body: 'JavaScriptを使うなら、まず、目を通しておきたい本ですね。' },
   { id: 2, book_id: 1, user_id: 3, status: 1, body: 'JavaScriptの基本を振り返りたいときにはこの本を頼りにしています。' },
   { id: 3, book_id: 2, user_id: 2, status: 0, body: 'とても役に立ちます。サンプルたくさん紹介されていてお勧めの一冊です。' },

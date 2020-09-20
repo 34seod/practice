@@ -4,7 +4,7 @@
 #
 #  id         :bigint           not null, primary key
 #  body       :text
-#  status     :integer
+#  status     :integer          default("draft"), not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  book_id    :bigint

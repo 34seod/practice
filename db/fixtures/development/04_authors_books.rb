@@ -1,4 +1,4 @@
-AuthorsBook.seed(:id,
+AuthorsBook.seed_once(:id,
   { id: 1, book_id: 1, author_id: 1 },
   { id: 2, book_id: 2, author_id: 1 },
   { id: 3, book_id: 2, author_id: 2 },
