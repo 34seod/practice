@@ -1,3 +1,6 @@
+= content_for :extend_menu do
+  = link_to 'aaa', action: :form_tag
+
 = form_tag(action: :create) do
   .field
     = label :book, :isbn

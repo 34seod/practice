@@ -60,6 +60,18 @@ Rails.application.routes.draw do
   get 'view/select'
   get 'view/col_select'
   get 'view/group_select'
+  get 'view/dat_select'
+  get 'view/col_radio'
+  get 'view/fields'
+  get 'view/simple_format'
+  get 'view/truncate'
+  get 'view/sanitize'
+  get 'view/link'
+  get 'view/helper'
+  get 'view/nest'
   post 'keyword/search'
+  get 'record/find_by2'
+  get 'record/keyword'
+  post 'record/ph1'
 
 end

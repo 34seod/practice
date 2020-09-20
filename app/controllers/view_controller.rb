@@ -1,6 +1,9 @@
 class ViewController < ApplicationController
+
+
   def form_tag
     @book = Book.new
+    render layout: 'only_view'
   end
 
   def form_for
@@ -12,7 +15,7 @@ class ViewController < ApplicationController
   end
 
   def select
-    @book = Book.new(publish: '기술평론사')
+    @book = Book.new(publish: '技術評論社')
   end
 
   def col_select
@@ -25,5 +28,25 @@ class ViewController < ApplicationController
   def group_select
     @review = Review.new
     @authors = Author.all.preload(:books)
+  end
+
+  def dat_select
+    @book = Book.find(1)
+  end
+
+  def col_radio
+    @book = Book.new(publish: '技術評論社')
+    @books =  Book.select(:publish).distinct
+  end
+
+  def fields
+    @user = User.find(1)
+  end
+
+  def nest
+    @msg = 'gggggggggggggggggggggg'
+    @book = Book.find 1
+    @books = Book.all
+    render layout: 'child'
   end
 end

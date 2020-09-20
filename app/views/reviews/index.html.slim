@@ -14,8 +14,8 @@ table
   tbody
     - @reviews.each do |review|
       tr
-        td = review.book
-        td = review.user
+        td = review.book.title
+        td = review.user.username
         td = review.status
         td = review.body
         td = link_to 'Show', review
