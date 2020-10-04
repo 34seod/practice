@@ -1,40 +1,72 @@
-let c: {
-  firstName: string
-  lastName: string
-} = {
-  firstName: 'aaa',
-  lastName: 'bbb'
+type Color = 'Black' | 'White'
+type FFile = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H'
+type Rank = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+
+
+let set = new Set
+set.add(1).add(2).add(3)
+set.has(2)
+set.has(3)
+
+class Set {
+  has(value: number): boolean {
+    return true
+  }
+
+  add(value: number): this {
+    return this
+  }
 }
 
-class Person {
-  constructor(
-    public firstName: string,
-    public lastName: string
-  ) {}
+class MutableSet extends Set {
+  delete(value: number): boolean {
+    return true
+  }
 }
 
-c = new Person('aaa', 'bbb')
-
-let a: {
-  b: number
-  c?: string
-  [key: number]: boolean
+type Food = {
+  calories: number
+  tasty: boolean
 }
 
-a = { b: 1 }
-a = { b: 1, c: undefined }
-a = { b: 1, c: 'd' }
-a = { b: 1, 10: true}
-a = { b: 1, 10: false, 11: true }
-
-let user: {
-  readonly firstName: string
+type Sushi = Food & {
+  salty: boolean
 }
 
-user = { firstName: 'aaa' }
-// user.firstName = 'bbb'
+type Cake = Food & {
+  sweet: boolean
+}
 
-let d: { twice(tt: number): number } = { twice(tt: number) { return tt * 3 } }
-// let e: Object = { toString() { return 3 } }
-// let f: object = { toString() { return 3 } }
-console.log(d.twice(3))
+interface IFood {
+  calories: number
+  tasty: boolean
+}
+
+interface ISushi extends IFood {
+  salty: boolean
+}
+
+interface ICake extends IFood {
+  sweet: boolean
+}
+
+interface A {
+  good(x: number): string
+  bad(x: number): string
+}
+
+interface B extends A {
+  good(x: string | number): string
+  bad(x: string): string
+}
+
+
+type C = {
+  good(x: number): string
+  bad(x: number): string
+}
+
+type D = C & {
+  good(x: string | number): string
+  bad(x: string): string
+}
