@@ -5,13 +5,34 @@ import (
 	"monkey/src/ast"
 	"monkey/src/lexer"
 	"monkey/src/token"
+	"strconv"
+)
+
+const (
+	_ int = iota
+	LOWEST
+	EQUALS      // ==
+	LESSGREATER // > OR <
+	SUM         // +
+	PRODUCT     // *
+	PREFIX      // -X OR !X
+	CALL        // myFunction(X)
+)
+
+type (
+	prefixParseFn func() ast.Expression
+	infixParseFn  func(ast.Expression) ast.Expression
 )
 
 type Parser struct {
-	l         *lexer.Lexer // 현재의 렉서 인스턴스
-	curToken  token.Token  // 현재의 토큰
-	peekToken token.Token  // 다음 토큰
-	errors    []string
+	l      *lexer.Lexer // 현재의 렉서 인스턴스
+	errors []string
+
+	curToken  token.Token // 현재의 토큰
+	peekToken token.Token // 다음 토큰
+
+	prefixParseFns map[token.TokenType]prefixParseFn
+	infixParseFns  map[token.TokenType]infixParseFn
 }
 
 func New(l *lexer.Lexer) *Parser {
@@ -23,6 +44,12 @@ func New(l *lexer.Lexer) *Parser {
 	// 토큰을 두 개 읽어서, curToken과 peekToken을 세팅
 	p.nextToken() // peekToken에 첫번째 토큰 등록
 	p.nextToken() // curToken에 첫번째 토큰, peekToken에 두번째 토큰 등록
+
+	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
+	p.registerPrefix(token.IDENT, p.parseIdentifier)
+	p.registerPrefix(token.INT, p.parseIntegerLiteral)
+	p.registerPrefix(token.BANG, p.parsePrefixExpression)
+	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
 
 	return p
 }
@@ -65,9 +92,32 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.RETURN:
 		return p.parseReturnStatement()
 	default:
-		return nil
+		return p.parserExpressionStatement()
 	}
 }
+
+func (p *Parser) parserExpressionStatement() *ast.ExpressionStatement {
+	stmt := &ast.ExpressionStatement{Token: p.curToken}
+	stmt.Expression = p.parseExpression(LOWEST)
+
+	if p.peekTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+
+	return stmt
+}
+
+func (p *Parser) parseExpression(precedence int) ast.Expression {
+	prefix := p.prefixParseFns[p.curToken.Type]
+	if prefix == nil {
+		p.noPrefixParseFnError(p.curToken.Type)
+		return nil
+	}
+	leftExp := prefix()
+
+	return leftExp
+}
+
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	stmt := &ast.ReturnStatement{Token: p.curToken}
 
@@ -121,4 +171,46 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 		p.peekError(t)
 		return false
 	}
+}
+
+func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
+	p.prefixParseFns[tokenType] = fn
+}
+
+func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
+	p.infixParseFns[tokenType] = fn
+}
+
+func (p *Parser) parseIdentifier() ast.Expression {
+	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+}
+
+func (p *Parser) parseIntegerLiteral() ast.Expression {
+	lit := &ast.IntegerLiteral{Token: p.curToken}
+
+	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
+	if err != nil {
+		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
+		p.errors = append(p.errors, msg)
+		return nil
+	}
+
+	lit.Value = value
+	return lit
+}
+
+func (p *Parser) parsePrefixExpression() ast.Expression {
+	expression := &ast.PrefixExpression{
+		Token:    p.curToken,
+		Operator: p.curToken.Literal,
+	}
+
+	p.nextToken()
+	expression.Right = p.parseExpression(PREFIX)
+	return expression
+}
+
+func (p *Parser) noPrefixParseFnError(t token.TokenType) {
+	msg := fmt.Sprintf("no prefix aprse function for %s found", t)
+	p.errors = append(p.errors, msg)
 }
