@@ -11,7 +11,7 @@ import (
 const (
 	_ int = iota
 	LOWEST
-	EQUALS      // ==
+	EQUALS      // == OR !=
 	LESSGREATER // > OR <
 	SUM         // +
 	PRODUCT     // *
@@ -61,6 +61,12 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.INT, p.parseIntegerLiteral)
 	p.registerPrefix(token.BANG, p.parsePrefixExpression)
 	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
+	p.registerPrefix(token.SLASH, p.parsePrefixExpression)
+	p.registerPrefix(token.ASTERISK, p.parsePrefixExpression)
+	p.registerPrefix(token.EQ, p.parsePrefixExpression)
+	p.registerPrefix(token.NOT_EQ, p.parsePrefixExpression)
+	p.registerPrefix(token.LT, p.parsePrefixExpression)
+	p.registerPrefix(token.GT, p.parsePrefixExpression)
 
 	return p
 }
@@ -125,6 +131,17 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 		return nil
 	}
 	leftExp := prefix()
+
+	for !p.peekTokenIs(token.SEMICOLON) && precedence < p.peekPrecedence() {
+		infix := p.infixParseFns[p.peekToken.Type]
+		if infix == nil {
+			return leftExp
+		}
+
+		p.nextToken()
+
+		leftExp = infix(leftExp)
+	}
 
 	return leftExp
 }
@@ -240,4 +257,18 @@ func (p *Parser) curPrecedence() int {
 	}
 
 	return LOWEST
+}
+
+func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
+	expression := &ast.InfixExpression{
+		Token:    p.curToken,
+		Operator: p.curToken.Literal,
+		Left:     left,
+	}
+
+	precedence := p.curPrecedence()
+	p.nextToken()
+	expression.Right = p.parseExpression(precedence)
+
+	return expression
 }
