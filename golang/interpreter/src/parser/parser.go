@@ -60,13 +60,14 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
 	p.registerPrefix(token.INT, p.parseIntegerLiteral)
 	p.registerPrefix(token.BANG, p.parsePrefixExpression)
-	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
-	p.registerPrefix(token.SLASH, p.parsePrefixExpression)
-	p.registerPrefix(token.ASTERISK, p.parsePrefixExpression)
-	p.registerPrefix(token.EQ, p.parsePrefixExpression)
-	p.registerPrefix(token.NOT_EQ, p.parsePrefixExpression)
-	p.registerPrefix(token.LT, p.parsePrefixExpression)
-	p.registerPrefix(token.GT, p.parsePrefixExpression)
+	p.registerInfix(token.PLUS, p.parseInfixExpression)
+	p.registerInfix(token.MINUS, p.parseInfixExpression)
+	p.registerInfix(token.SLASH, p.parseInfixExpression)
+	p.registerInfix(token.ASTERISK, p.parseInfixExpression)
+	p.registerInfix(token.EQ, p.parseInfixExpression)
+	p.registerInfix(token.NOT_EQ, p.parseInfixExpression)
+	p.registerInfix(token.LT, p.parseInfixExpression)
+	p.registerInfix(token.GT, p.parseInfixExpression)
 
 	return p
 }
