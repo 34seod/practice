@@ -10,19 +10,16 @@ services:
     depends_on:
       - 'db'
   db:
-    image: mysql:8.0
+    image: mariadb:10
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: db
       MYSQL_USER: usr
       MYSQL_PASSWORD: password
       TZ: 'Asiz/Seoul'
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
-      - mysql-data:/var/lib/mysql
-      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./db/conf.d:/etc/mysql/conf.d
+      - ./db/data:/var/lib/mysql
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
     ports:
       - 3306:3306
-volumes:
-  mysql-data:
-    driver: local
