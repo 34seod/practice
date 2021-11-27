@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sample-node-affinity
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution: # 필수조건
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: disktype
+                operator: In
+                values:
+                  - hdd
+      preferredDuringSchedulingIgnoredDuringExecution: # 우선조건
+        - weight: 1 # 값이 높을 수록 더 우선으로 적용 됨3333333333333333333
+          preference:
+            matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                  - minikube
+  containers:
+    - name: nginx-container
+      image: nginx:1.16
