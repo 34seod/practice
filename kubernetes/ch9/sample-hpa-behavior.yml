@@ -1,0 +1,38 @@
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: sample-hpa-behavior
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: sample-hpa-deployment
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 15
+    scaleUp:
+      # 레플리카 수가 급감/급증하는 것을 피하기 위한 설정.
+      # 지정된 기간동안 추천 레플리카 수를 바탕으로 레플리카 수를 결정한다.
+      # 0인 경우 즉시 레플리카 수로 변경된다.
+      stabilizationWindowSeconds: 0
+      policies:
+        - type: Percent # 레플리카 수에 대한 백분율
+          value: 100 # 100% 증가( 2배 증가 )
+          periodSeconds: 15 # 15초 동안
+        - type: Pods # 레플리카수에 대한 정수값
+          value: 4 # 4개 증가
+          periodSeconds: 15 # 15초 동안
+      selectPolicy: Max # 여러개의 정책중 어떤 값을 선택할지 지정 Max의 경우 두개 중 더 많이 늘어나는 정책 선택

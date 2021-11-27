@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sample-env-pod
+  labels:
+    name: sample-env-pod
+spec:
+  containers:
+  - name: sample-env-pod
+    image: nginx:1.16
+    env:
+    - name: K8S_NODE
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName

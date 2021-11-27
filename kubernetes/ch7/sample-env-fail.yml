@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sample-env-fail
+  labels:
+    name: sample-env-fail
+spec:
+  containers:
+  - name: sample-env-fail
+    image: nginx:1.17
+    command: ["echo"]
+    args: ["$(TESTENV)", "${HOSTNAME}"]
+    env:
+    - name: TESTENV
+      value: "100"
