@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gin-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gin
+  template:
+    metadata:
+      name: gin-app
+      labels:
+        app: gin
+    spec:
+      containers:
+        - name: gin-app
+          image: gin
+          imagePullPolicy: Never
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: src
+              mountPath: /app
+      volumes:
+        - name: src
+          hostPath:
+            path: /host
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gin-np
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      protocol: TCP
+      nodePort: 31000
+  selector:
+    app: gin
