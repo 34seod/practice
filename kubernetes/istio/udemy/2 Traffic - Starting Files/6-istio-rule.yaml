@@ -1,0 +1,39 @@
+# WHILE ($TRUE) { curl http://172.31.47.194:30080/api/vehicles/driver/Huddersfield%20Truck%20A; echo ""; sleep 0.5 }
+
+# VirtualService : 서비스 메시에서 커스텀 라우팅할 수 있는 기능
+# DestinationRule : subset 정의
+
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: fleetman-staff-service
+  namespace: default
+spec:
+  hosts:
+    - fleetman-staff-service.default.svc.cluster.local
+  http:
+    - route:
+        - destination:
+            host: fleetman-staff-service.default.svc.cluster.local
+            subset: safe-group
+          weight: 100
+        - destination:
+            host: fleetman-staff-service.default.svc.cluster.local
+            subset: risky-group
+          weight: 0
+
+---
+kind: DestinationRule
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: fleetman-staff-service
+  namespace: default
+spec:
+  host: fleetman-staff-service.default.svc.cluster.local
+  subsets:
+    - labels:                # selector
+        version: safe
+      name: safe-group
+    - labels:                # selector
+        version: risky
+      name: risky-group
