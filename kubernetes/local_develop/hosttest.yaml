@@ -1,0 +1,75 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: gin-deploy
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: gin
+#   template:
+#     metadata:
+#       name: gin-app
+#       labels:
+#         app: gin
+#     spec:
+#       containers:
+#         - name: gin-app
+#           image: gin
+#           imagePullPolicy: Never
+#           resources:
+#             limits:
+#               memory: "200Mi"
+#               cpu: "300m"
+#           ports:
+#             - containerPort: 8080
+#           volumeMounts:
+#             - name: src
+#               mountPath: /app
+#       volumes:
+#         - name: src
+#           hostPath:
+#             path: /c/Users/btpink/Documents/workspace/practice/kubernetes/local_develop
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gin
+  labels:
+    app: gin
+spec:
+  containers:
+  - name: gin-container
+    image: gin
+    imagePullPolicy: Never
+    resources:
+      limits:
+        memory: "200Mi"
+        cpu: "300m"
+    ports:
+      - containerPort: 8080
+    volumeMounts:
+      - name: src
+        mountPath: /app
+  volumes:
+    - name: src
+      hostPath:
+        path: /c/Users/btpink/Documents/workspace/practice/kubernetes/local_develop
+
+
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gin-np
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      protocol: TCP
+      nodePort: 31000
+  selector:
+    app: gin
