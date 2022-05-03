@@ -41,11 +41,11 @@ metadata:
 spec:
   containers:
   - name: gin-container
-    image: gin
+    image: air-gin
     imagePullPolicy: Never
     resources:
       limits:
-        memory: "200Mi"
+        memory: "512Mi"
         cpu: "300m"
     ports:
       - containerPort: 8080

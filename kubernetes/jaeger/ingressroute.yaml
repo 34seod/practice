@@ -1,0 +1,45 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: foo
+spec:
+  entryPoints:                      # [1]
+    - web
+  routes:                           # [2]
+  - kind: Rule
+    match: PathPrefix(`/productpage`, `/static`, `/favicon`) # [3]
+    services:                       # [8]
+    - kind: Service
+      name: productpage
+      namespace: default
+      port: 9080
+  - kind: Rule
+    match: PathPrefix(`/reviews`) # [3]
+    services:                       # [8]
+    - kind: Service
+      name: reviews
+      namespace: default
+      port: 9080
+  - kind: Rule
+    match: PathPrefix(`/ratings`) # [3]
+    services:                       # [8]
+    - kind: Service
+      name: ratings
+      namespace: default
+      port: 9080
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jaeger
+spec:
+  entryPoints:                      # [1]
+    - jaeger
+  routes:                           # [2]
+  - kind: Rule
+    match: PathPrefix(`/`) # [3]
+    services:                       # [8]
+    - kind: Service
+      name: jaeger-query
+      namespace: default
+      port: 16686

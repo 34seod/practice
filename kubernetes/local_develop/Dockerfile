@@ -1,5 +1,5 @@
 FROM golang:1.17.3-alpine
-RUN apk add --update nodejs npm lsof && npm install -g nodemon
+RUN apk add --update curl && curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
 RUN mkdir app
 WORKDIR /app
 
@@ -9,7 +9,7 @@ RUN go mod download
 
 COPY . .
 EXPOSE 8080
-CMD nodemon --legacy-watch
+CMD air
 
 # docker build . -t gin
 # docker run -it -p 8080:8080 -v ${PWD}:/app gin
